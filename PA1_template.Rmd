@@ -7,12 +7,42 @@ output:
 
 
 ## Loading and preprocessing the data
+```{r init}
+data_file <- "activity.csv"
+zip_file <- "activity.zip"
+zip_url <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
 
+## Checking to see if required files are present
+if (!file.exists(data_file)){
+  
+  if (!file.exists(zip_file)){
+    download.file(zip_url, destfile = zip_file)
+    unzip(zip_file)
+  }
+  
+  act_data <- read.csv(data_file, header = TRUE, stringsAsFactors = FALSE)
+  
+}
+
+```
 
 
 ## What is mean total number of steps taken per day?
+```{r mean, eval=FALSE}
+library(data.table)
+
+act_dt <- data.table(act_data)
+
+means <- act_dt[, .(mean.steps = mean(steps)), by=date]
+
+```
+```{r mean-plot, warning=FALSE}
+library(ggplot2)
+
+g1 <- ggplot(means, aes(mean.steps)) + geom_bar(color="lightblue", fill="blue")
 
 
+```
 
 ## What is the average daily activity pattern?
 
