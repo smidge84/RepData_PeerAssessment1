@@ -166,3 +166,36 @@ The above conditional plot shows how the frequency of ranges of steps within a d
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+
+```r
+## Using the imputed data set created above
+
+## Converting to date class from strings
+imp_data2 <- imp_data %>% mutate(date = as.Date(date, format = "%Y-%m-%d"))
+
+## Specifying the type of day
+imp_data2 <- imp_data2 %>% mutate(day.type = ifelse(weekdays(date) == "Saturday" | weekdays(date) == "Sunday", "Weekend", "Weekday"))
+
+## Converting the day.type to a factor from a string
+lvls = c("Weekday", "Weekend")
+
+imp_data2 <- imp_data2 %>% mutate(day.type = factor(day.type, levels = lvls))
+
+## Creating the conditional plot
+## Calculating the mean steps by interval for weekdays and weekends
+imp_ints <- imp_data2 %>% group_by(interval, day.type) %>% summarise(mean.steps = mean(steps))
+
+## Plotting
+g5 <- ggplot(imp_ints, aes(interval, mean.steps)) + geom_line(aes(color=day.type)) + facet_grid(day.type ~ .)
+g5 <- g5 + labs(title="Average Number of Steps per 5sec Interval separated by\nWeekdays & Weekends") + theme(plot.title = element_text(face="bold"))
+g5 <- g5 + xlab("Time in seconds") + ylab("Mean number of steps")
+## To change the ledgend title to something more useful
+g5 <- g5 + scale_color_discrete(name="Type of Day") 
+
+print(g5)
+```
+
+![](PA1_template_files/figure-html/weekday-end-1.png) 
+
+End of data analysis.
